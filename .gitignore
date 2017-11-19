@@ -1,0 +1,4 @@
+tmp/*
+.vagrant/*
+puppet-lab.iml
+.idea/*

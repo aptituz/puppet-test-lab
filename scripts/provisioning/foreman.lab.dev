@@ -1,0 +1,56 @@
+#!/bin/bash
+
+. /vagrant/scripts/provisioning/common.sh
+
+initialize_control_repo() {
+    test -d /vagrant/tmp/control-repo.git && return
+
+    # delete existing repos
+    rm -r /vagrant/tmp/control-repo || true
+    rm -r /vagrant/tmp/control-repo.git || true
+    rm -r /srv/repositories/ || true
+
+
+    cp -r /vagrant/control-repo  /vagrant/tmp/control-repo
+
+    git init --bare /vagrant/tmp/control-repo.git
+    pushd /vagrant/tmp/control-repo && (
+        echo $PWD
+        git init
+        git remote add origin /vagrant/tmp/control-repo.git
+        git add -A
+        git commit -m "Initial import"
+        git branch -m master production
+        git checkout production &&  git branch -D master
+        git push --set-upstream origin production
+    )
+
+    mkdir -p /srv/repositories/
+    cp -r /vagrant/tmp/control-repo.git /srv/repositories/
+    cd /vagrant/tmp/control-repo.git && ( echo "ref: refs/heads/production" > HEAD )
+
+}
+
+setup_foreman_repo_and_download_packages() {
+    # Install foreman
+    echo "deb http://deb.theforeman.org/ xenial 1.15" > /etc/apt/sources.list.d/foreman.list
+    echo "deb http://deb.theforeman.org/ plugins 1.15" >> /etc/apt/sources.list.d/foreman.list
+    wget -q https://deb.theforeman.org/pubkey.gpg -O- | apt-key add -
+
+    apt-get update && apt-get -yd install foreman foreman-postgresql foreman-proxy foreman-installer puppetserver
+}
+
+bootstrap_foreman_master() {
+    apt-get install -y foreman-installer
+    #foreman-installer --foreman-admin-password=admin
+    apt-get install -y r10k
+    cd /vagrant/control-repo && (
+        r10k puppetfile install --puppetfile /vagrant/control-repo/Puppetfile  --moduledir /etc/puppetlabs/code/environments/production/modules/
+        /opt/puppetlabs/bin/puppet apply --modulepath=site:/etc/puppetlabs/code/environments/production/modules bootstrap.pp
+    )
+}
+
+prepare
+initialize_control_repo
+setup_foreman_repo_and_download_packages
+bootstrap_foreman_master

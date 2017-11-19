@@ -1,0 +1,2 @@
+---
+profile::foreman::admin_password: 'admin'

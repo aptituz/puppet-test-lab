@@ -1,0 +1,19 @@
+---
+- name: foreman.lab.dev
+  ip: 10.14.88.3
+  aliases: ['foreman', 'puppetmaster']
+  primary: true
+  memory: 4096
+  forwarded_ports:
+    - guest: 10022
+      host: 10022
+    - guest: 10080
+      host: 10080
+    - guest: 80
+      host: 8080
+    - guest: 443
+      host: 8443
+- name: agent01.lab.dev
+  ip: 10.14.88.2
+  aliases: ['agent01']
+  memory: 1024

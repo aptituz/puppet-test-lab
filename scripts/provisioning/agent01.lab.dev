@@ -1,0 +1,5 @@
+#!/bin/bash
+
+. /vagrant/scripts/provisioning/common.sh
+
+prepare

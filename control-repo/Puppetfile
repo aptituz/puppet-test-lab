@@ -1,0 +1,30 @@
+forge "http://forge.puppetlabs.com"
+
+
+
+mod 'theforeman-puppet', '8.0.4'
+mod 'theforeman-foreman', '8.1.1'
+mod 'theforeman-tftp'
+mod 'puppetlabs-xinetd'
+
+mod 'puppetlabs/apache'
+mod 'puppetlabs/postgresql'
+
+mod 'puppetlabs/concat'
+mod 'puppet-r10k', '6.2.0'
+# dependency of puppet/r10k
+mod 'gentoo-portage', '2.3.0'
+
+mod 'camptocamp-systemd', '1.1.0'
+mod 'puppetlabs-vcsrepo', '2.2.0'
+mod 'puppetlabs-apt', '4.4.0'
+mod 'puppetlabs-stdlib', '4.22.0'
+mod 'puppet/extlib'
+
+mod 'puppetlabs-ruby'
+mod 'puppetlabs-gcc'
+mod 'puppetlabs-inifile'
+mod 'puppetlabs-git'
+mod 'puppet/make', '1.1.0'
+
+
